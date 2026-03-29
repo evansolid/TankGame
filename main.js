@@ -1,4 +1,4 @@
-const socket = io("http://192.168.0.8:3000");
+const socket = io("https://usgs-apartment-once-donald.trycloudflare.com");
 
 let myId;
 let players = {};

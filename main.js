@@ -1,4 +1,4 @@
-const socket = io("http://YOUR_PI_IP:3000"); // change this
+const socket = io("http://192.168.0.8:3000");
 
 let myId;
 let players = {};

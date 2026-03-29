@@ -1,4 +1,4 @@
-const socket = io("https://vacuum-authorities-transportation-sculpture.trycloudflare.com");
+const socket = io("https://nose-charitable-charts-graphs.trycloudflare.com");
 
 socket.on("connect", () => console.log("Connected:", socket.id));
 

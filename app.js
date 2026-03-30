@@ -92,6 +92,22 @@ async function sendMove() {
   });
 }
 
+async function resetServer() {
+  await fetch(API + "/reset", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ key: "mysecret" })
+  });
+}
+
+async function kickPlayer(id) {
+  await fetch(API + "/kick", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ key: "mysecret", id })
+  });
+}
+
 function pollState() {
   setInterval(async () => {
     const res = await fetch(API + "/state");

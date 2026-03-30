@@ -4,6 +4,60 @@ let playerId = null;
 let canvas, ctx;
 let terrain = [];
 
+let dragging = false;
+let dragStart = { x: 0, y: 0 };
+let angleInput = document.getElementById("angle");
+let powerInput = document.getElementById("power");
+
+// Mouse / touch events for dragging
+canvas.addEventListener("mousedown", (e) => {
+  dragging = true;
+  dragStart = { x: e.offsetX, y: e.offsetY };
+});
+canvas.addEventListener("mousemove", (e) => {
+  if (!dragging) return;
+  const dx = e.offsetX - dragStart.x;
+  const dy = dragStart.y - e.offsetY; // inverted Y for screen
+  const angle = Math.min(Math.max(Math.atan2(dy, dx) * 180/Math.PI, 0), 180);
+  const power = Math.min(Math.sqrt(dx*dx + dy*dy)/10, 10);
+  angleInput.value = angle.toFixed(0);
+  powerInput.value = power.toFixed(1);
+});
+canvas.addEventListener("mouseup", () => { dragging = false; });
+
+// Touch events for mobile
+canvas.addEventListener("touchstart", (e) => {
+  e.preventDefault();
+  dragging = true;
+  const t = e.touches[0];
+  dragStart = { x: t.clientX - canvas.offsetLeft, y: t.clientY - canvas.offsetTop };
+});
+canvas.addEventListener("touchmove", (e) => {
+  if (!dragging) return;
+  const t = e.touches[0];
+  const dx = t.clientX - canvas.offsetLeft - dragStart.x;
+  const dy = dragStart.y - (t.clientY - canvas.offsetTop);
+  const angle = Math.min(Math.max(Math.atan2(dy, dx) * 180/Math.PI, 0), 180);
+  const power = Math.min(Math.sqrt(dx*dx + dy*dy)/10, 10);
+  angleInput.value = angle.toFixed(0);
+  powerInput.value = power.toFixed(1);
+});
+canvas.addEventListener("touchend", () => { dragging = false; });
+
+// Keyboard control
+window.addEventListener("keydown", (e) => {
+  let angle = Number(angleInput.value);
+  let power = Number(powerInput.value);
+  switch(e.key) {
+    case "ArrowUp": power = Math.min(power+0.2, 10); break;
+    case "ArrowDown": power = Math.max(power-0.2, 1); break;
+    case "ArrowLeft": angle = Math.max(angle-2, 0); break;
+    case "ArrowRight": angle = Math.min(angle+2, 180); break;
+  }
+  angleInput.value = angle.toFixed(0);
+  powerInput.value = power.toFixed(1);
+});
+
 window.onload = () => {
   canvas = document.getElementById("gameCanvas");
   ctx = canvas.getContext("2d");

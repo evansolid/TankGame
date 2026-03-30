@@ -1,16 +1,27 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<title>Tank Game</title>
+    <title>Tank Game</title>
 </head>
 <body>
-  <input id="angle" type="range" min="0" max="180"> Angle<br>
-  <input id="power" type="range" min="0" max="100"> Power<br>
-  <button id="fire">Fire</button>
+    <h1>Tank Game Test</h1>
+    <button onclick="sendMove()">Send Move</button>
 
-<script src="https://cdn.socket.io/4.7.1/socket.io.min.js"></script>
-<script src="main.js"></script>
-<canvas id="gameCanvas" width="800" height="600"></canvas>
+    <script>
+        const SERVER_URL = "https://cingular-review-heard-bathroom.trycloudflare.com";
+
+        async function sendMove() {
+            const res = await fetch(SERVER_URL + "/move", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ player: "test", angle: 45 })
+            });
+
+            const data = await res.json();
+            console.log(data);
+        }
+    </script>
 </body>
 </html>

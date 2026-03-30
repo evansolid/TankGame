@@ -1,5 +1,5 @@
 // Point this to your Pi backend
-const API = "https://tank.yourdomain.com";
+const API = "https://tank.evansolid.com";
 
 let playerId = null;
 

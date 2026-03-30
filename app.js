@@ -1,4 +1,4 @@
-const API = "https://tank.yourdomain.com"; // point to your Pi backend
+const API = "https://tank.evansolid.com"; // point to your Pi backend
 
 let playerId = null;
 let canvas, ctx;

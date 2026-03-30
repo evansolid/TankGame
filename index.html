@@ -1,27 +1,21 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Tank Game</title>
+  <title>Tank Game</title>
 </head>
 <body>
-    <h1>Tank Game Test</h1>
-    <button onclick="sendMove()">Send Move</button>
+  <h1>Tank Game</h1>
 
-    <script>
-        const SERVER_URL = "https://cingular-review-heard-bathroom.trycloudflare.com";
+  <div id="lobby">
+    <input id="name" placeholder="Enter your name">
+    <button onclick="join()">Join Game</button>
+  </div>
 
-        async function sendMove() {
-            const res = await fetch(SERVER_URL + "/move", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ player: "test", angle: 45 })
-            });
+  <div id="game" style="display:none;">
+    <p id="status"></p>
+    <button onclick="sendMove()">Fire</button>
+  </div>
 
-            const data = await res.json();
-            console.log(data);
-        }
-    </script>
+  <script src="app.js"></script>
 </body>
 </html>

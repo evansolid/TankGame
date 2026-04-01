@@ -4,30 +4,34 @@
   <title>Bomb Game</title>
 </head>
 <body>
-
-<h2 id="playerName"></h2>
+<h1>Bomb Game</h1>
 
 <div id="joinScreen">
-  <input id="name" placeholder="Username">
+  <input id="name" placeholder="Enter your name">
   <button onclick="join()">Join</button>
 </div>
 
 <div id="lobbyScreen" style="display:none;">
-  <h3>Lobby:</h3>
+  <h3>Lobby</h3>
+  <p>Your name: <span id="myName"></span></p>
   <ul id="playerList"></ul>
-  <button onclick="start()">Start Game</button>
+  <button onclick="startGame()">Start Game</button>
 </div>
 
 <div id="gameScreen" style="display:none;">
-  <p id="info"></p>
-  <h3>Vote for elimination:</h3>
-  <div id="voteList"></div>
-  <h3 id="passTitle" style="display:none;">Pass Bomb:</h3>
-  <div id="passList"></div>
+  <p>Your name: <span id="myNameGame"></span></p>
+  <p id="turnInfo"></p>
+
+  <h4>Vote to eliminate:</h4>
+  <div id="voteButtons"></div>
+
+  <h4 id="passTitle" style="display:none;">Pass bomb:</h4>
+  <div id="passButtons"></div>
+
   <button onclick="submitTurn()">Submit Turn</button>
-  <h3>Log:</h3>
-  <div id="log"></div>
-  <button onclick="reset()">Reset Game</button>
+  <h4>Log:</h4>
+  <div id="gameLog"></div>
+  <button onclick="resetGame()">Reset Game</button>
 </div>
 
 <script src="app.js"></script>

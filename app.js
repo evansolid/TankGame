@@ -1,4 +1,4 @@
-const API = "https://tank.evansolid.com";
+const API = "https://tank.yourdomain.com";
 
 let playerId = null;
 let selectedVote = null;
@@ -15,6 +15,9 @@ async function join() {
 
   const data = await res.json();
   playerId = data.id;
+
+  document.getElementById("joinScreen").style.display = "none";
+  document.getElementById("lobbyScreen").style.display = "block";
 
   poll();
 }
@@ -39,21 +42,11 @@ async function submitTurn() {
 }
 
 async function reset() {
-  const key = prompt("Admin key:");
-  await fetch(API + "/reset", {
-    method: "POST",
-    headers: {"Content-Type":"application/json"},
-    body: JSON.stringify({ key })
-  });
+  await fetch(API + "/reset", { method: "POST" });
 }
 
-// -------- UI UPDATE --------
-
 function updateUI(state) {
-  const lobby = document.getElementById("lobby");
-  const game = document.getElementById("game");
-
-  // player list
+  // update player list
   const list = document.getElementById("playerList");
   list.innerHTML = "";
   state.players.forEach(p => {
@@ -62,46 +55,50 @@ function updateUI(state) {
     list.appendChild(li);
   });
 
+  // lobby vs game
   if (state.phase === "lobby") {
-    lobby.style.display = "block";
-    game.style.display = "none";
+    document.getElementById("lobbyScreen").style.display = "block";
+    document.getElementById("gameScreen").style.display = "none";
     return;
   }
 
-  lobby.style.display = "none";
-  game.style.display = "block";
+  document.getElementById("lobbyScreen").style.display = "none";
+  document.getElementById("gameScreen").style.display = "block";
 
   document.getElementById("info").innerText =
-    `Turn ${state.turn} | Bomb: ${state.bomb ? "YES" : "NO"} | Submitted: ${state.submitted}/${state.total}`;
+    `Turn ${state.turn} | You have bomb: ${state.bomb}`;
 
-  const actions = document.getElementById("actions");
-  actions.innerHTML = "";
+  // voting
+  const voteList = document.getElementById("voteList");
+  voteList.innerHTML = "";
 
   state.players.filter(p => p.alive).forEach(p => {
-    const div = document.createElement("div");
-
-    const voteBtn = document.createElement("button");
-    voteBtn.innerText = "Vote";
-    voteBtn.onclick = () => selectedVote = p.id;
-
-    div.innerText = p.name + " ";
-    div.appendChild(voteBtn);
-
-    if (state.bomb) {
-      const passBtn = document.createElement("button");
-      passBtn.innerText = "Pass Bomb";
-      passBtn.onclick = () => selectedPass = p.id;
-      div.appendChild(passBtn);
-    }
-
-    actions.appendChild(div);
+    const btn = document.createElement("button");
+    btn.innerText = p.name;
+    btn.onclick = () => selectedVote = p.id;
+    voteList.appendChild(btn);
   });
 
-  const logDiv = document.getElementById("log");
-  logDiv.innerHTML = state.log.join("<br>");
-}
+  // pass
+  const passList = document.getElementById("passList");
+  passList.innerHTML = "";
 
-// -------- POLLING --------
+  if (state.bomb) {
+    document.getElementById("passTitle").style.display = "block";
+    state.players.filter(p => p.alive).forEach(p => {
+      const btn = document.createElement("button");
+      btn.innerText = p.name;
+      btn.onclick = () => selectedPass = p.id;
+      passList.appendChild(btn);
+    });
+  } else {
+    document.getElementById("passTitle").style.display = "none";
+  }
+
+  // log
+  document.getElementById("log").innerHTML =
+    state.log.join("<br>");
+}
 
 function poll() {
   setInterval(async () => {

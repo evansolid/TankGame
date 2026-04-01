@@ -1,29 +1,26 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Tank Game</title>
-  <style>
-    canvas { background: #eef; display:block; margin: 20px auto; border: 1px solid black; }
-    input, button { margin: 5px; }
-  </style>
+  <title>Bomb Game</title>
 </head>
 <body>
-  <h1>Tank Game 3</h1>
 
-  <div id="lobby">
-    <input id="name" placeholder="Enter your name">
-    <button onclick="join()">Join Game</button>
-  </div>
+<h1>Bomb Game</h1>
 
-  <div id="game" style="display:none;">
-    <canvas id="gameCanvas" width="800" height="400"></canvas><br>
-    Type: <select id="type"><option value="small">Small</option><option value="big">Big</option></select>
-    Angle: <input id="angle" type="number" min="0" max="180" value="45">
-    Power: <input id="power" type="number" min="1" max="10" value="5">
-    <button onclick="sendMove()">Fire</button>
-    <p id="status"></p>
-  </div>
+<div id="lobby">
+  <input id="name" placeholder="Name">
+  <button onclick="join()">Join</button>
+  <button onclick="start()">Start Game</button>
+</div>
 
-  <script src="app.js"></script>
+<div id="game" style="display:none;">
+  <p id="info"></p>
+
+  <div id="players"></div>
+
+  <button onclick="reset()">Reset (admin)</button>
+</div>
+
+<script src="app.js"></script>
 </body>
 </html>

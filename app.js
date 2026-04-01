@@ -1,4 +1,4 @@
-const API = "http://tank.evansolid.com"; // replace with your domain
+const API = "https://tank.evansolid.com"; // replace with your domain
 let myName = null;
 
 function join() {

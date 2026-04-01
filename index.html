@@ -4,7 +4,7 @@
   <title>Bomb Game</title>
 </head>
 <body>
-<h1>Bomb Game</h1>
+<h1>Bomb Game 2</h1>
 
 <div id="joinScreen">
   <input id="name" placeholder="Enter your name">
@@ -12,7 +12,7 @@
 </div>
 
 <div id="lobbyScreen" style="display:none;">
-  <h3>Lobby</h3>
+  <h3>Lobby (<span id="playerCount">0</span> players)</h3>
   <p>Your name: <span id="myName"></span></p>
   <ul id="playerList"></ul>
   <button onclick="startGame()">Start Game</button>
@@ -21,12 +21,17 @@
 <div id="gameScreen" style="display:none;">
   <p>Your name: <span id="myNameGame"></span></p>
   <p id="turnInfo"></p>
+  <p>Players submitted: <span id="votedCount">0</span></p>
 
-  <h4>Vote to eliminate:</h4>
-  <div id="voteButtons"></div>
+  <div id="voteSection">
+    <h4>Vote to eliminate:</h4>
+    <div id="voteButtons"></div>
+  </div>
 
-  <h4 id="passTitle" style="display:none;">Pass bomb:</h4>
-  <div id="passButtons"></div>
+  <div id="passSection" style="display:none;">
+    <h4>Pass the bomb:</h4>
+    <div id="passButtons"></div>
+  </div>
 
   <button onclick="submitTurn()">Submit Turn</button>
   <h4>Log:</h4>

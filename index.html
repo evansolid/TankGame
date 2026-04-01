@@ -1,46 +1,33 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<title>Bomb Passing Game</title>
-<style>
-body { font-family: Arial, sans-serif; margin: 20px; }
-.hidden { display: none; }
-button { margin: 5px; }
-#log { border: 1px solid #ccc; padding: 10px; height: 200px; overflow-y: scroll; }
-.alive { color: green; }
-.dead { color: red; }
-</style>
+  <title>Bomb Game</title>
 </head>
 <body>
 
+<h2 id="playerName"></h2>
+
 <div id="joinScreen">
-  <h2>Join Game</h2>
-  Name: <input type="text" id="nameInput">
-  <button id="joinBtn">Join</button>
+  <input id="name" placeholder="Username">
+  <button onclick="join()">Join</button>
 </div>
 
-<div id="lobbyScreen" class="hidden">
-  <h2>Lobby</h2>
-  <div>Players:</div>
+<div id="lobbyScreen" style="display:none;">
+  <h3>Lobby:</h3>
   <ul id="playerList"></ul>
-  <button id="startBtn">Start Game</button>
+  <button onclick="start()">Start Game</button>
 </div>
 
-<div id="gameScreen" class="hidden">
-  <h2>Game - Turn <span id="turnNum"></span></h2>
-  <div id="status"></div>
-  <div>
-    Vote to eliminate:
-    <select id="voteSelect"></select>
-  </div>
-  <div id="bombPassDiv">
-    Pass bomb to:
-    <select id="passSelect"></select>
-  </div>
-  <button id="submitBtn">Submit Turn</button>
-  <h3>Game Log</h3>
+<div id="gameScreen" style="display:none;">
+  <p id="info"></p>
+  <h3>Vote for elimination:</h3>
+  <div id="voteList"></div>
+  <h3 id="passTitle" style="display:none;">Pass Bomb:</h3>
+  <div id="passList"></div>
+  <button onclick="submitTurn()">Submit Turn</button>
+  <h3>Log:</h3>
   <div id="log"></div>
+  <button onclick="reset()">Reset Game</button>
 </div>
 
 <script src="app.js"></script>

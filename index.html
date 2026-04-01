@@ -5,20 +5,29 @@
 </head>
 <body>
 
-<h1>Bomb Game</h1>
+<h1>Bomb Game 2</h1>
 
 <div id="lobby">
-  <input id="name" placeholder="Name">
+  <input id="name" placeholder="Username">
   <button onclick="join()">Join</button>
   <button onclick="start()">Start Game</button>
+
+  <h3>Players:</h3>
+  <ul id="playerList"></ul>
 </div>
 
 <div id="game" style="display:none;">
   <p id="info"></p>
 
-  <div id="players"></div>
+  <h3>Alive Players:</h3>
+  <div id="actions"></div>
 
-  <button onclick="reset()">Reset (admin)</button>
+  <button onclick="submitTurn()">Submit Turn</button>
+
+  <h3>Game Log:</h3>
+  <div id="log"></div>
+
+  <button onclick="reset()">Reset</button>
 </div>
 
 <script src="app.js"></script>

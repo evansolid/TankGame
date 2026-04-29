@@ -2,7 +2,7 @@ const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
 canvas.width = 800;
-canvas.height = 400;
+canvas.height = 500;
 
 // Paddles
 const paddleWidth = 10;

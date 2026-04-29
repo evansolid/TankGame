@@ -1,47 +1,37 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Bomb Game</title>
+	<title>Evan's Tank Game</title>
+	<link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
-<h1>This site is currently under construction. Come back soon! :D</h1>
-<!--
-<h1>Bomb Game</h1>
-
-<div id="joinScreen">
-  <input id="name" placeholder="Enter your name">
-  <button onclick="join()">Join</button>
+<div class="canvas-container">
+	<canvas id="background" width="1002px" height="625px"></canvas>
+	<canvas id="game-board" width="1000px" height="625px"></canvas>
+	<div class="modal">
+		<div id="modal-inner">
+		</div>
+	</div>
+</div>
+<div class="info-container">
+	<div id="turn"></div>
+	<div id="power"></div>
+	<div id="angle"></div>
 </div>
 
-<div id="lobbyScreen" style="display:none;">
-  <h3>Lobby (<span id="playerCount">0</span> players)</h3>
-  <p>Your name: <span id="myName"></span></p>
-  <ul id="playerList"></ul>
-  <button onclick="startGame()">Start Game</button>
+<div id="button-container">
+	<button id="2players">Two Players</button>
+	<button id="3players">Three Players</button>
+	<button id="4players">Four Players</button>
 </div>
 
-<div id="gameScreen" style="display:none;">
-  <p>Your name: <span id="myNameGame"></span></p>
-  <p id="turnInfo"></p>
-  <p>Players submitted: <span id="votedCount">0</span></p>
 
-  <div id="voteSection">
-    <h4>Vote to eliminate:</h4>
-    <div id="voteButtons"></div>
-  </div>
+<p>How to play: 
+  Use the left and right arrow keys to angle the cannon </br>
+  Use the up and down arrow keys to change the power of the cannon </br>
+  Press spacebar to fire your cannon </br>
+  the last tank remaining wins!</p>
 
-  <div id="passSection" style="display:none;">
-    <h4>You have the bomb! Pass it to:</h4>
-    <div id="passButtons"></div>
-  </div>
-
-  <button onclick="submitTurn()">Submit Turn</button>
-  <h4>Log:</h4>
-  <div id="gameLog"></div>
-  <button onclick="resetGame()">Reset Game</button>
-</div>
-
-<script src="app.js"></script>
--->
+<script type="text/javascript" src="js/app.js"></script>
 </body>
 </html>

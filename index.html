@@ -1,37 +1,297 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Evan's Tank Game</title>
-	<link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" href="tankStyle.css">
+    <meta charset="UTF-8">
 </head>
+    <title>Tank Game</title>
+</head>
+
 <body>
-<div class="canvas-container">
-	<canvas id="background" width="1002px" height="625px"></canvas>
-	<canvas id="game-board" width="1000px" height="625px"></canvas>
-	<div class="modal">
-		<div id="modal-inner">
-		</div>
-	</div>
-</div>
-<div class="info-container">
-	<div id="turn"></div>
-	<div id="power"></div>
-	<div id="angle"></div>
-</div>
+<canvas id="canvas"></canvas>
+<div id="ui"></div>
 
-<div id="button-container">
-	<button id="2players">Two Players</button>
-	<button id="3players">Three Players</button>
-	<button id="4players">Four Players</button>
-</div>
+<script>
+const c = document.getElementById("canvas");
+const ctx = c.getContext("2d");
 
+c.width = innerWidth;
+c.height = innerHeight;
 
-<p>How to play: 
-  Use the left and right arrow keys to angle the cannon </br>
-  Use the up and down arrow keys to change the power of the cannon </br>
-  Press spacebar to fire your cannon </br>
-  the last tank remaining wins!</p>
+const W = c.width;
+const H = c.height;
 
-<script type="text/javascript" src="js/app.js"></script>
+const GRAVITY = 0.25;
+
+// ---------------- TERRAIN (HEIGHTMAP) ----------------
+const terrain = new Array(W).fill(0);
+
+function generateTerrain(){
+    for(let x=0;x<W;x++){
+        terrain[x] =
+            H*0.6 +
+            Math.sin(x*0.01)*50 +
+            Math.random()*20;
+    }
+}
+
+function drawTerrain(){
+    ctx.fillStyle = "#3b2f2f";
+    for(let x=0;x<W;x++){
+        ctx.fillRect(x, terrain[x], 1, H);
+    }
+}
+
+function explodeTerrain(x, y, r){
+    for(let i=-r;i<r;i++){
+        let px = Math.floor(x+i);
+        if(px<0||px>=W) continue;
+
+        let dy = Math.sqrt(r*r - i*i);
+        terrain[px] += dy;
+    }
+}
+
+// ---------------- PARTICLES ----------------
+class Particle {
+    constructor(x,y,vx,vy,color){
+        this.x=x; this.y=y;
+        this.vx=vx; this.vy=vy;
+        this.life=1;
+        this.color=color;
+    }
+
+    update(){
+        this.vy += GRAVITY*0.4;
+        this.x += this.vx;
+        this.y += this.vy;
+        this.life -= 0.02;
+    }
+
+    draw(){
+        ctx.fillStyle = this.color;
+        ctx.globalAlpha = this.life;
+        ctx.fillRect(this.x,this.y,2,2);
+        ctx.globalAlpha = 1;
+    }
+}
+
+let particles = [];
+
+// ---------------- TANK ----------------
+class Tank {
+    constructor(x,color){
+        this.x=x;
+        this.y=0;
+        this.vy=0;
+        this.angle=0;
+        this.power=10;
+        this.hp=100;
+        this.color=color;
+        this.alive=true;
+    }
+
+    update(){
+        this.vy += GRAVITY;
+        this.y += this.vy;
+
+        let ground = terrain[Math.floor(this.x)];
+        if(this.y > ground-10){
+            this.y = ground-10;
+            this.vy = 0;
+        }
+    }
+
+    draw(){
+        ctx.fillStyle=this.color;
+        ctx.fillRect(this.x-8,this.y-8,16,16);
+
+        ctx.strokeStyle=this.color;
+        ctx.beginPath();
+        ctx.moveTo(this.x,this.y);
+        ctx.lineTo(
+            this.x+Math.cos(this.angle)*20,
+            this.y+Math.sin(this.angle)*20
+        );
+        ctx.stroke();
+
+        // HP bar
+        ctx.fillStyle="red";
+        ctx.fillRect(this.x-20,this.y-25,40,5);
+        ctx.fillStyle="lime";
+        ctx.fillRect(this.x-20,this.y-25,40*(this.hp/100),5);
+    }
+}
+
+// ---------------- PROJECTILE ----------------
+class Projectile {
+    constructor(x,y,vx,vy,type,owner){
+        this.x=x; this.y=y;
+        this.vx=vx; this.vy=vy;
+        this.type=type;
+        this.owner=owner;
+        this.dead=false;
+    }
+
+    update(){
+        this.vy += GRAVITY;
+        this.x += this.vx;
+        this.y += this.vy;
+
+        if(this.x<0||this.x>W||this.y>H){
+            this.dead=true;
+        }
+
+        let ground = terrain[Math.floor(this.x)];
+        if(this.y >= ground){
+            this.dead=true;
+            explosions.push({
+                x:this.x,
+                y:this.y,
+                r:40,
+                owner:this.owner
+            });
+        }
+    }
+
+    draw(){
+        ctx.fillStyle="yellow";
+        ctx.fillRect(this.x,this.y,3,3);
+    }
+}
+
+// ---------------- EXPLOSIONS (BATCHED) ----------------
+let explosions = [];
+
+function applyExplosions(){
+    for(let e of explosions){
+        explodeTerrain(e.x,e.y,e.r);
+
+        for(let i=0;i<30;i++){
+            particles.push(new Particle(
+                e.x,
+                e.y,
+                (Math.random()-0.5)*6,
+                (Math.random()-0.5)*6,
+                "orange"
+            ));
+        }
+
+        damage(e.x,e.y,e.r,e.owner);
+    }
+    explosions = [];
+}
+
+// ---------------- DAMAGE ----------------
+function damage(x,y,r,owner){
+    for(let t of tanks){
+        let dx = t.x-x;
+        let dy = t.y-t.y;
+        let dist = Math.abs(dx);
+
+        if(dist<r){
+            t.hp -= (r-dist)*0.8;
+        }
+    }
+}
+
+// ---------------- GAME OBJECTS ----------------
+let tanks = [
+    new Tank(200,"blue"),
+    new Tank(W-200,"red")
+];
+
+let projectiles = [];
+let turn = 0;
+let turnDone = false;
+
+// ---------------- WEAPONS ----------------
+const weapons = [
+    {name:"Cannon", speed:10, spread:0},
+    {name:"Rocket", speed:8, spread:0.2},
+    {name:"Cluster", speed:9, spread:0.5}
+];
+
+let weaponIndex = 0;
+
+// ---------------- INPUT ----------------
+addEventListener("keydown",e=>{
+    let t = tanks[turn];
+
+    if(e.key==="ArrowLeft") t.x -= 5;
+    if(e.key==="ArrowRight") t.x += 5;
+
+    if(e.key==="ArrowUp") t.angle -= 0.1;
+    if(e.key==="ArrowDown") t.angle += 0.1;
+
+    if(e.key==="1") weaponIndex=0;
+    if(e.key==="2") weaponIndex=1;
+    if(e.key==="3") weaponIndex=2;
+
+    if(e.key===" "){
+        fire(t);
+        turnDone = true;
+    }
+});
+
+// ---------------- FIRE ----------------
+function fire(t){
+    let w = weapons[weaponIndex];
+
+    let vx = Math.cos(t.angle)*w.speed;
+    let vy = Math.sin(t.angle)*w.speed;
+
+    vx += (Math.random()-0.5)*w.spread;
+
+    projectiles.push(new Projectile(
+        t.x,t.y,vx,vy,w.name,turn
+    ));
+}
+
+// ---------------- TURN LOGIC ----------------
+function nextTurn(){
+    turn = (turn+1)%2;
+    turnDone = false;
+}
+
+// ---------------- LOOP ----------------
+function update(){
+
+    for(let t of tanks) t.update();
+
+    for(let p of projectiles) p.update();
+    projectiles = projectiles.filter(p=>!p.dead);
+
+    particles.forEach(p=>p.update());
+    particles = particles.filter(p=>p.life>0);
+
+    if(turnDone && projectiles.length===0){
+        applyExplosions();
+        nextTurn();
+    }
+}
+
+function draw(){
+    ctx.clearRect(0,0,W,H);
+
+    drawTerrain();
+
+    tanks.forEach(t=>t.draw());
+    projectiles.forEach(p=>p.draw());
+    particles.forEach(p=>p.draw());
+
+    ctx.fillStyle="white";
+    ctx.fillText("Turn: "+turn,10,20);
+}
+
+function loop(){
+    update();
+    draw();
+    requestAnimationFrame(loop);
+}
+
+generateTerrain();
+loop();
+</script>
 </body>
 </html>
